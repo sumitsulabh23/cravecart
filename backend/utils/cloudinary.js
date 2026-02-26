@@ -37,14 +37,16 @@ const smartFetchImage = async (url, folder) => {
         const axios = require('axios');
         let targetImageUrl = url;
 
+        console.log(`[SmartFetch] Processing URL: ${url}`);
+
         // If it's a webpage (not ending in common image extensions), try to find og:image
-        const isLikelyWebPage = !/\.(jpg|jpeg|png|webp|gif|svg)$/i.test(url.split('?')[0]);
+        const isLikelyWebPage = !/\.(jpg|jpeg|png|webp|gif|svg|avif)$/i.test(url.split('?')[0]);
 
         if (isLikelyWebPage && url.startsWith('http')) {
-            console.log(`Analyzing webpage for image: ${url}`);
+            console.log(`[SmartFetch] Analyzing webpage for metadata...`);
             try {
                 const { data: html } = await axios.get(url, {
-                    headers: { 'User-Agent': 'Mozilla/5.0' },
+                    headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' },
                     timeout: 7000
                 });
 
@@ -65,13 +67,13 @@ const smartFetchImage = async (url, folder) => {
                 // Prioritization: JSON-LD (usually most specific) > OG > Twitter
                 if (jsonLdMatch && jsonLdMatch[1] && !jsonLdMatch[1].includes('placeholder')) {
                     bestImageUrl = jsonLdMatch[1];
-                    console.log(`Found high-quality JSON-LD image: ${bestImageUrl}`);
+                    console.log(`[SmartFetch] Found high-quality JSON-LD image: ${bestImageUrl}`);
                 } else if (ogMatch && ogMatch[1]) {
                     bestImageUrl = ogMatch[1];
-                    console.log(`Found og:image: ${bestImageUrl}`);
+                    console.log(`[SmartFetch] Found og:image: ${bestImageUrl}`);
                 } else if (twitterMatch && twitterMatch[1]) {
                     bestImageUrl = twitterMatch[1];
-                    console.log(`Found twitter:image: ${bestImageUrl}`);
+                    console.log(`[SmartFetch] Found twitter:image: ${bestImageUrl}`);
                 }
 
                 if (bestImageUrl) {
@@ -81,21 +83,40 @@ const smartFetchImage = async (url, folder) => {
                         bestImageUrl = new URL(bestImageUrl, baseUrl).href;
                     }
                     targetImageUrl = bestImageUrl;
+                } else {
+                    console.log(`[SmartFetch] No metadata image found, falling back to original URL.`);
                 }
             } catch (err) {
-                console.error(`Failed to fetch webpage: ${err.message}. Using original URL as fallback.`);
+                console.error(`[SmartFetch] Webpage analysis failed: ${err.message}. Using original URL as fallback.`);
             }
         }
 
-        // Upload to Cloudinary (handles both direct URLs and fetched URLs)
-        const result = await cloudinary.uploader.upload(targetImageUrl, {
+        // Fetch the actual image data as a buffer to avoid Cloudinary being blocked by the host
+        console.log(`[SmartFetch] Fetching image content from: ${targetImageUrl}`);
+        const response = await axios.get(targetImageUrl, {
+            responseType: 'arraybuffer',
+            headers: { 'User-Agent': 'Mozilla/5.0' },
+            timeout: 10000
+        });
+
+        const contentType = response.headers['content-type'] || 'image/jpeg';
+        if (!contentType.startsWith('image/')) {
+            console.warn(`[SmartFetch] Warning: content-type ${contentType} is not an image. Attempting anyway.`);
+        }
+
+        const buffer = Buffer.from(response.data, 'binary');
+        const base64Image = `data:${contentType};base64,${buffer.toString('base64')}`;
+
+        console.log(`[SmartFetch] Uploading buffer to Cloudinary in folder: ${folder}`);
+        const result = await cloudinary.uploader.upload(base64Image, {
             folder: folder,
             resource_type: 'auto'
         });
 
+        console.log(`[SmartFetch] Success! URL: ${result.secure_url}`);
         return result.secure_url;
     } catch (error) {
-        console.error('Smart fetch failed:', error.message);
+        console.error('[SmartFetch] Fatal Error:', error.response ? `Status ${error.response.status}` : error.message);
         throw new Error('Failed to fetch/upload image from provide link');
     }
 };

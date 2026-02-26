@@ -47,13 +47,16 @@ const createRestaurant = async (req, res) => {
         let image = '';
 
         if (req.file) {
+            console.log(`[CreateRestaurant] Using uploaded file: ${req.file.originalname}`);
             image = req.file.path;
         } else if (imageUrl) {
+            console.log(`[CreateRestaurant] Using image link: ${imageUrl}`);
             // Smart fetch and re-host to Cloudinary
             image = await smartFetchImage(imageUrl, 'cravecart/restaurants');
         }
 
         if (!name || !description || !address || !image) {
+            console.error(`[CreateRestaurant] Validation failed. Missing fields or image. Image state: ${image ? 'present' : 'missing'}`);
             return res.status(400).json({ success: false, message: 'All fields including image are required' });
         }
 
