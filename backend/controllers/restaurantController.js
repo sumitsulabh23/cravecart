@@ -57,6 +57,7 @@ const createRestaurant = async (req, res) => {
             owner: req.user._id
         });
 
+        console.log(`Saving restaurant with image: ${image}`);
         const createdRestaurant = await restaurant.save();
         res.status(201).json({
             success: true,
@@ -89,6 +90,7 @@ const updateRestaurant = async (req, res) => {
                 restaurant.image = req.body.image;
             }
 
+            console.log(`Updating restaurant ${req.params.id} with image: ${restaurant.image}`);
             const updatedRestaurant = await restaurant.save();
             res.json(updatedRestaurant);
         } else {

@@ -52,7 +52,12 @@ const RestaurantMenu = () => {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-[#14b8a6]/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
 
                 <div className="w-full md:w-1/3 aspect-square rounded-[32px] overflow-hidden shadow-2xl shadow-teal-900/10 relative z-10">
-                    <img src={restaurant.image} alt={restaurant.name} className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
+                    <img
+                        src={restaurant.image}
+                        alt={restaurant.name}
+                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop'; }}
+                    />
                 </div>
 
                 <div className="flex-grow space-y-6 relative z-10 text-center md:text-left">

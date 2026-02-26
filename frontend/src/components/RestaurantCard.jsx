@@ -13,6 +13,7 @@ const RestaurantCard = ({ restaurant }) => {
                     src={restaurant.image}
                     alt={restaurant.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop'; }}
                 />
                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-1.5 text-[#14b8a6] font-bold text-xs shadow-sm">
                     <Star size={14} fill="currentColor" />

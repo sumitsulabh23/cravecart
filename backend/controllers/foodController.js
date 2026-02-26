@@ -46,6 +46,7 @@ const createFoodItem = async (req, res) => {
             image
         });
 
+        console.log(`Saving food item with image: ${image}`);
         const createdFood = await foodItem.save();
         res.status(201).json({
             success: true,
@@ -78,6 +79,7 @@ const updateFoodItem = async (req, res) => {
                 foodItem.image = req.body.image;
             }
 
+            console.log(`Updating food item ${req.params.id} with image: ${foodItem.image}`);
             const updatedFood = await foodItem.save();
             res.json(updatedFood);
         } else {

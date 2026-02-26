@@ -134,7 +134,12 @@ const RestaurantManagement = () => {
                                 <tr key={res._id} className="hover:bg-[#14b8a6]/[0.02] transition-colors group">
                                     <td className="px-8 py-6">
                                         <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-inner">
-                                            <img src={res.image} alt={res.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                            <img
+                                                src={res.image}
+                                                alt={res.name}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop'; }}
+                                            />
                                         </div>
                                     </td>
                                     <td className="px-8 py-6">
@@ -249,7 +254,12 @@ const RestaurantManagement = () => {
                                             required={!editMode && !formData.imageUrl}
                                         />
                                         {preview ? (
-                                            <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                                            <img
+                                                src={preview}
+                                                alt="Preview"
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop'; }}
+                                            />
                                         ) : (
                                             <>
                                                 <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-[#14b8a6] mb-4 group-hover:scale-110 transition-transform">

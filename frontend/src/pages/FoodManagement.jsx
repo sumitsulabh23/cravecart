@@ -131,7 +131,12 @@ const FoodManagement = () => {
                 {foods.map(food => (
                     <div key={food._id} className="bg-white rounded-[40px] p-2 card-shadow border border-gray-50 flex flex-col group hover-lift transition-all relative overflow-hidden">
                         <div className="relative aspect-square rounded-[32px] overflow-hidden mb-4 shadow-inner">
-                            <img src={food.image} alt={food.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                            <img
+                                src={food.image}
+                                alt={food.name}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1760&auto=format&fit=crop'; }}
+                            />
                             <div className="absolute top-4 right-4 flex gap-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                                 <button onClick={() => openEdit(food)} className="w-10 h-10 bg-white/90 backdrop-blur-md rounded-xl flex items-center justify-center text-[#14b8a6] shadow-lg hover:bg-white transition-colors">
                                     <Edit size={18} />
@@ -248,7 +253,12 @@ const FoodManagement = () => {
                                             required={!editMode && !formData.imageUrl}
                                         />
                                         {preview ? (
-                                            <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                                            <img
+                                                src={preview}
+                                                alt="Preview"
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1760&auto=format&fit=crop'; }}
+                                            />
                                         ) : (
                                             <>
                                                 <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-[#14b8a6] mb-4 group-hover:scale-110 transition-transform">
