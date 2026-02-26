@@ -37,4 +37,13 @@ const isOwner = (req, res, next) => {
     }
 };
 
-module.exports = { protect, admin, isOwner };
+const authorizeRoles = (...roles) => {
+    return (req, res, next) => {
+        if (!req.user || !roles.includes(req.user.role)) {
+            return res.status(403).json({ message: `Role: ${req.user?.role || 'User'} is not allowed to access this resource` });
+        }
+        next();
+    };
+};
+
+module.exports = { protect, admin, isOwner, authorizeRoles };

@@ -14,7 +14,7 @@ const Navbar = () => {
     return (
         <nav className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
             <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-                <Link to="/" className="text-2xl font-extrabold text-[#14b8a6] flex items-center gap-2 tracking-tight">
+                <Link to={user && (user.role === 'admin' || user.role === 'owner') ? "/admin" : "/"} className="text-2xl font-extrabold text-[#14b8a6] flex items-center gap-2 tracking-tight">
                     <div className="bg-[#14b8a6] p-1.5 rounded-lg text-white">
                         <ShoppingBag size={22} fill="currentColor" />
                     </div>
@@ -24,26 +24,31 @@ const Navbar = () => {
                 <div className="flex items-center gap-8">
                     {user ? (
                         <>
-                            <Link to="/cart" className="relative text-gray-600 hover:text-[#14b8a6] transition-colors">
-                                <ShoppingCart size={22} />
-                                {cartCount > 0 && (
-                                    <span className="absolute -top-2 -right-2 bg-[#14b8a6] text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">
-                                        {cartCount}
-                                    </span>
-                                )}
-                            </Link>
+                            {user.role === 'customer' && (
+                                <Link to="/cart" className="relative text-gray-600 hover:text-[#14b8a6] transition-colors">
+                                    <ShoppingCart size={22} />
+                                    {cartCount > 0 && (
+                                        <span className="absolute -top-2 -right-2 bg-[#14b8a6] text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </Link>
+                            )}
 
                             <div className="flex items-center gap-6 border-l pl-6 border-gray-100">
-                                <Link to="/orders" className="text-gray-600 hover:text-[#14b8a6] font-medium flex items-center gap-2 text-sm transition-colors">
-                                    <User size={18} />
-                                    <span>{user.name}</span>
-                                </Link>
+                                {user.role === 'customer' && (
+                                    <Link to="/orders" className="text-gray-600 hover:text-[#14b8a6] font-medium flex items-center gap-2 text-sm transition-colors">
+                                        <User size={18} />
+                                        <span>{user.name}</span>
+                                    </Link>
+                                )}
 
                                 {(user.role === 'admin' || user.role === 'owner') && (
-                                    <Link to="/admin" className="text-gray-600 hover:text-[#14b8a6] font-medium flex items-center gap-2 text-sm transition-colors">
-                                        <LayoutDashboard size={18} />
-                                        <span>Dashboard</span>
-                                    </Link>
+                                    <div className="text-gray-600 font-medium flex items-center gap-2 text-sm">
+                                        <User size={18} />
+                                        <span>{user.name}</span>
+                                        <span className="bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded-md font-bold ml-1 uppercase">{user.role}</span>
+                                    </div>
                                 )}
 
                                 <button

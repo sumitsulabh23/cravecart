@@ -5,12 +5,12 @@ const {
     getAllOrders,
     updateOrderStatus
 } = require('../controllers/orderController');
-const { protect, admin } = require('../middlewares/authMiddleware');
+const { protect, admin, authorizeRoles } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
-router.post('/', protect, createOrder);
-router.get('/myorders', protect, getMyOrders);
+router.post('/', protect, authorizeRoles('customer'), createOrder);
+router.get('/myorders', protect, authorizeRoles('customer'), getMyOrders);
 router.get('/', protect, admin, getAllOrders);
 router.put('/:id/status', protect, admin, updateOrderStatus);
 

@@ -4,7 +4,7 @@ import { AuthContext } from './context/AuthContext';
 import MainLayout from './components/MainLayout';
 import { Toaster } from 'react-hot-toast';
 
-// Mock/Placeholder pages for now
+
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -26,19 +26,26 @@ function App() {
     return children;
   };
 
+  const CustomerRoute = ({ children }) => {
+    if (user && (user.role === 'admin' || user.role === 'owner')) {
+      return <Navigate to="/admin" />;
+    }
+    return children;
+  };
+
   return (
     <>
       <Toaster position="top-center" />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<MainLayout />}>
-            <Route index element={<Home />} />
-            <Route path="restaurant/:id" element={<RestaurantMenu />} />
+            <Route index element={<CustomerRoute><Home /></CustomerRoute>} />
+            <Route path="restaurant/:id" element={<CustomerRoute><RestaurantMenu /></CustomerRoute>} />
             <Route path="login" element={!user ? <Login /> : <Navigate to="/" />} />
             <Route path="register" element={!user ? <Register /> : <Navigate to="/" />} />
 
-            <Route path="cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-            <Route path="orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+            <Route path="cart" element={<CustomerRoute><ProtectedRoute><Cart /></ProtectedRoute></CustomerRoute>} />
+            <Route path="orders" element={<CustomerRoute><ProtectedRoute><Orders /></ProtectedRoute></CustomerRoute>} />
 
             <Route path="admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
             <Route path="admin/restaurants" element={<ProtectedRoute adminOnly><RestaurantManagement /></ProtectedRoute>} />
