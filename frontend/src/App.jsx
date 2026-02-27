@@ -39,7 +39,15 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<MainLayout />}>
-            <Route index element={<CustomerRoute><Home /></CustomerRoute>} />
+            {/* If not logged in, force users to login first */}
+            <Route
+              index
+              element={
+                user
+                  ? <CustomerRoute><Home /></CustomerRoute>
+                  : <Navigate to="/login" replace />
+              }
+            />
             <Route path="restaurant/:id" element={<CustomerRoute><RestaurantMenu /></CustomerRoute>} />
             <Route path="login" element={!user ? <Login /> : <Navigate to="/" />} />
             <Route path="register" element={!user ? <Register /> : <Navigate to="/" />} />
